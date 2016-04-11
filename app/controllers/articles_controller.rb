@@ -1,7 +1,6 @@
 class ArticlesController < ApplicationController
 
-	before_action :find_article, only: [:show]
-
+	before_action :find_article, only: [:show, :edit, :update, :destroy ]
 
 
 	def index
@@ -14,11 +13,14 @@ class ArticlesController < ApplicationController
 
 	def new
 		@article = Article.new
-		#@article = current_user.articles.build
+		## Joanne - the next line is going to break the method until you create a way for users to signup and exist in DB
+#		@article = current_user.articles.build
 	end
 
 	def create
-		@article = current_user.articles.build(article_params)
+		## Joanne - the next line is going to break the method until you create a way for users to signup and exist in DB
+		#  @article = current_user.article.build(article_params)
+		@article = Article.create(article_params)
 		if @article.save
 			redirect_to @article
 		else
@@ -29,7 +31,7 @@ class ArticlesController < ApplicationController
 	private 
 
 	def article_params
-		params.require(:article).permit(:title, :content, :id)
+		params.require(:article).permit(:title, :content)
 	end
 
 	def find_article
