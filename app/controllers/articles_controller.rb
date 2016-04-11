@@ -1,10 +1,17 @@
 class ArticlesController < ApplicationController
 
-	before_action :find_article, only: [:show, :edit, :update, :destroy ]
+	before_action :find_article, only: [:show]
+	before_action :authenticate_user!, except: [:index, :show]
+
 
 
 	def index
-		@articles = Article.all.order("created_at DESC")
+			if params[:category].blank?
+				@articles = Article.all.order("created_at DESC")
+			else
+				@category_id = Category.find_by(name: params[:category]).id
+				@articles = Article.where(category_id: @category_id).order("created_at DESC")
+			end
 	end
 
 	def show
@@ -12,15 +19,12 @@ class ArticlesController < ApplicationController
 
 
 	def new
-		@article = Article.new
-		## Joanne - the next line is going to break the method until you create a way for users to signup and exist in DB
-#		@article = current_user.articles.build
+		#@article = Article.new
+		@article = current_user.articles.build
 	end
 
 	def create
-		## Joanne - the next line is going to break the method until you create a way for users to signup and exist in DB
-		#  @article = current_user.article.build(article_params)
-		@article = Article.create(article_params)
+		@article = current_user.articles.build(article_params)
 		if @article.save
 			redirect_to @article
 		else
@@ -31,12 +35,13 @@ class ArticlesController < ApplicationController
 	private 
 
 	def article_params
-		params.require(:article).permit(:title, :content)
+		params.require(:article).permit(:title, :content, :category_id)
 	end
 
 	def find_article
 		@article = Article.find(params[:id])
 	end
+
 
 
 end

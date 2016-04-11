@@ -9,4 +9,6 @@
   </p>
 <% end %>
 
-<%= link_to "New Article", new_article_path %>
+<% if user_signed_in?  %>
+  <%= link_to "New Article", new_article_path %> 
+<% end %>
